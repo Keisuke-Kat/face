@@ -30,10 +30,6 @@ jobs:
           python -m briefcase create iOS --no-input --log
           python -m briefcase build  iOS --no-input --log
 
-      # （任意）シミュレータ実行 ※シミュレータはカメラ非対応
-      - name: Run on iOS Simulator (optional)
-        run: |
-          python -m briefcase run iOS --no-input --log -d "iPhone SE (3rd generation)"
 
       # Xcodeプロジェクトを成果物化（配布はXcodeで）
       - name: Archive Xcode project
