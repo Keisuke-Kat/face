@@ -1,0 +1,44 @@
+name: iOS (BeeWare)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install Briefcase
+        run: |
+          python -m pip install -U pip setuptools wheel
+          python -m pip install briefcase
+
+      - name: Create & Build (iOS, Xcode)
+        run: |
+          briefcase create iOS Xcode --no-input --log
+          briefcase build  iOS Xcode --no-input --log
+
+      # （任意）シミュレーター実行。※シミュレーターはカメラ非対応
+      - name: Run on iOS Simulator (optional)
+        run: |
+          briefcase run iOS Xcode --no-input --log --device "iPhone SE (3rd generation)"
+
+      # 配布はXcodeで行うため、XcodeプロジェクトをArtifactsへ
+      - name: Archive Xcode project
+        run: |
+          PROJ=$(find . -name "*.xcodeproj" -maxdepth 4 | head -n 1)
+          D=$(dirname "$PROJ")
+          /usr/bin/zip -r XcodeProject.zip "$D"
+        shell: bash
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: XcodeProject
+          path: XcodeProject.zip
