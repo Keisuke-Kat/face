@@ -4,6 +4,7 @@ on:
   push:
     branches: [ main ]
   pull_request:
+  workflow_dispatch:   # ← 手動実行ボタンを出す
 
 jobs:
   ios:
@@ -30,11 +31,10 @@ jobs:
           python -m briefcase create iOS --no-input --log
           python -m briefcase build  iOS --no-input --log
 
-
-      # Xcodeプロジェクトを成果物化（配布はXcodeで）
+      # Xcodeプロジェクトを成果物化（配布はXcodeで行う）
       - name: Archive Xcode project
         run: |
-          PROJ=$(find . -name "*.xcodeproj" -maxdepth 4 | head -n 1)
+          PROJ=$(find build -name "*.xcodeproj" | head -n 1)
           D=$(dirname "$PROJ")
           /usr/bin/zip -r XcodeProject.zip "$D"
         shell: bash
