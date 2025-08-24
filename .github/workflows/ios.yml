@@ -32,14 +32,16 @@ jobs:
           python -m briefcase build  iOS --no-input --log
 
       # Xcodeプロジェクトを成果物化（配布はXcodeで行う）
-      - name: Archive Xcode project
+      - name: Archive Xcode folder
         run: |
-          PROJ=$(find build -name "*.xcodeproj" | head -n 1)
-          D=$(dirname "$PROJ")
-          /usr/bin/zip -r XcodeProject.zip "$D"
+          # iOS用のxcodeフォルダ（最初の1件）を検出して丸ごとzip
+          XCODE_DIR=$(find build -type d -path "*/ios/xcode" | head -n 1)
+          echo "XCODE_DIR=$XCODE_DIR"
+          /usr/bin/zip -r Xcode_xcode_dir.zip "$XCODE_DIR"
         shell: bash
 
       - uses: actions/upload-artifact@v4
         with:
-          name: XcodeProject
-          path: XcodeProject.zip
+          name: Xcode_xcode_dir
+          path: Xcode_xcode_dir.zip
+
